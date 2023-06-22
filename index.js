@@ -1,22 +1,21 @@
-const express = require('express')
-const cors = require('cors')
-const app = express();
 require('dotenv').config()
-const port = process.env.PORT || 5000;
+const express = require('express')
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+require('mongodb');
+const port = process.env.PORT || 5000 ;
+const app = express()
+const cors = require('cors')
 
-//middlewire
-app.use(express.json())
-
-const corsConfig = {
+// middleware
+const corsOptions = {
   origin: '*',
   credentials: true,
-  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']
+  optionSuccessStatus: 200,
 }
-app.use(cors(corsConfig))
-app.options("", cors(corsConfig))
+app.use(cors())
+app.use(express.json())
 
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.3zrq8rq.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ltowhpf.mongodb.net/?retryWrites=true&w=majority`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
@@ -29,13 +28,13 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-     //client.connect();
+     await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
 
-    const ToyCollection = client.db('ToyCollection').collection('ToyDb')
+    const ToyCollection = client.db('ToyMarket').collection('ToyDb')
 
     app.get('/alltoys',async(req,res)=>{
         const limit = parseInt(req.query.limit)
